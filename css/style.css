@@ -25,6 +25,24 @@
     --bad-bg:    #fae8e4;
     --gold:      #f0b429;
 
+    /* Опорная нота подсказки: видна, но не спорит с вопросом */
+    --anchor:    #a9b6c4;
+
+    /*
+     * Цвета уровней.
+     *
+     * Семь карточек одного цвета ребёнок различает только чтением, а читает
+     * он медленно. Цвет — вторая примета: «зелёный» находится взглядом,
+     * пока «Первая октава» ещё разбирается по слогам.
+     */
+    --tone-1: #4a9d5f;
+    --tone-2: #3f8fd8;
+    --tone-3: #8b5fd1;
+    --tone-4: #d86f3f;
+    --tone-5: #d13f7a;
+    --tone-6: #2fa5a5;
+    --tone-7: #b3862f;
+
     --font-text: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
                  "Helvetica Neue", Arial, sans-serif;
 
@@ -119,7 +137,28 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 
 .level:active { transform: scale(0.99); }
-.level.done { border-color: var(--good); background: var(--good-bg); }
+
+/*
+ * Цветная полоса слева, а не цветной ключ.
+ *
+ * Перекрасить ключ было заманчиво — он и так главная примета карточки, — но
+ * ключ ребёнок должен узнавать в нотной тетради, где он чёрный. Полоса даёт
+ * карточке цвет, ничего не переучивая.
+ */
+.level { border-left: 6px solid var(--tone, var(--line)); }
+
+.levels .level:nth-child(1) { --tone: var(--tone-1); }
+.levels .level:nth-child(2) { --tone: var(--tone-2); }
+.levels .level:nth-child(3) { --tone: var(--tone-3); }
+.levels .level:nth-child(4) { --tone: var(--tone-4); }
+.levels .level:nth-child(5) { --tone: var(--tone-5); }
+.levels .level:nth-child(6) { --tone: var(--tone-6); }
+.levels .level:nth-child(7) { --tone: var(--tone-7); }
+
+/* Пройденный уровень — золотой, а не зелёный: золото тут медаль, а не «зачёт» */
+.level.done { border-color: var(--gold); border-left-color: var(--tone, var(--gold)); background: #fffaef; }
+
+.level-medal { font-size: 26px; line-height: 1; }
 
 .level-clef { color: var(--ink); display: flex; }
 .level-clef .stan-mini { width: 46px; height: 58px; }
@@ -220,6 +259,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .count { font-size: 13px; color: var(--text-dim); }
 
 .stage {
+    position: relative;
     flex: 1;
     display: flex;
     align-items: center;
@@ -364,6 +404,157 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 
 .big-btn:active { filter: brightness(0.94); }
+
+/* ================== ПОДСКАЗКА ================== */
+
+/*
+ * Опорная нота бледнее вопроса и не спорит с ним цветом даже тогда, когда
+ * вопрос позеленел или покраснел: она не ответ, она точка отсчёта.
+ */
+.stan .stan-anchor { color: var(--anchor); }
+
+.tip {
+    margin: 6px 0 0;
+    font-size: 15px;
+    color: var(--text-dim);
+}
+
+/*
+ * Кнопка подсказки — тихая.
+ *
+ * Она обязана быть на виду (иначе ребёнок жмёт наугад вместо того, чтобы
+ * считать), но не должна выглядеть главной: главная здесь — попытка
+ * прочитать самому.
+ */
+.tip-btn {
+    margin-top: 6px;
+    padding: 8px 20px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--text-dim);
+    font: inherit;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.tip-btn:active { background: var(--bg); }
+
+/* ================== СЕРИЯ ================== */
+
+/*
+ * Огонёк за три верных подряд.
+ *
+ * Награда за то, чего не видно в счёте: восемь из десяти можно набрать и
+ * вперемешку с ошибками, а три подряд означают, что ноты правда читаются.
+ */
+.streak {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--good-bg);
+    color: var(--good);
+    font-size: 14px;
+    font-weight: 600;
+    animation: серия-пришла 0.35s ease-out;
+}
+
+@keyframes серия-пришла {
+    from { opacity: 0; transform: scale(0.6) translateY(-6px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ================== ОЖИВЛЕНИЕ ================== */
+
+/*
+ * Нота появляется, подпрыгивает от верного ответа и вздрагивает от
+ * неверного.
+ *
+ * Это не украшение. Экран перерисовывается целиком, и без движения новая
+ * нота ничем не отличается от прежней: ребёнок отвечает, картинка
+ * мгновенно подменяется, и он не замечает, что вопрос уже другой.
+ */
+@keyframes нота-пришла {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes нота-прыгнула {
+    0%   { transform: translateY(0) scale(1); }
+    35%  { transform: translateY(-10px) scale(1.04); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes нота-дрогнула {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-7px); }
+    50%      { transform: translateX(6px); }
+    80%      { transform: translateX(-3px); }
+}
+
+.stage .stan     { animation: нота-пришла 0.22s ease-out; }
+.stage .stan.ok  { animation: нота-прыгнула 0.45s ease-out; }
+.stage .stan.bad { animation: нота-дрогнула 0.4s ease-out; }
+
+.result-stars .star { animation: звезда-зажглась 0.5s ease-out backwards; }
+.result-stars .star:nth-child(2) { animation-delay: 0.18s; }
+.result-stars .star:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes звезда-зажглась {
+    0%   { opacity: 0; transform: scale(0.2) rotate(-40deg); }
+    70%  { opacity: 1; transform: scale(1.25) rotate(6deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+.result-stars .star { display: inline-block; }
+
+/* ================== КОНФЕТТИ ================== */
+
+.confetti {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: -24px;
+    width: 10px;
+    height: 14px;
+    border-radius: 2px;
+    animation: бумажка-упала 2.6s linear forwards;
+}
+
+.confetti-piece:nth-child(5n+1) { background: var(--tone-2); }
+.confetti-piece:nth-child(5n+2) { background: var(--gold); }
+.confetti-piece:nth-child(5n+3) { background: var(--tone-1); }
+.confetti-piece:nth-child(5n+4) { background: var(--tone-5); }
+.confetti-piece:nth-child(5n+5) { background: var(--tone-3); }
+
+@keyframes бумажка-упала {
+    from { transform: translateY(0) rotate(0); opacity: 1; }
+    to   { transform: translateY(105vh) rotate(var(--кувырок, 360deg)); opacity: 0.9; }
+}
+
+/*
+ * Движение отключаемо системной настройкой.
+ *
+ * Не только вежливость к тем, кого укачивает: у части детей мелькание
+ * действительно мешает сосредоточиться, и настройка «меньше движения» —
+ * единственное, чем родитель может это выключить.
+ */
+@media (prefers-reduced-motion: reduce) {
+    .stage .stan, .stage .stan.ok, .stage .stan.bad,
+    .streak, .result-stars .star, .confetti-piece {
+        animation: none;
+    }
+
+    .confetti { display: none; }
+}
 
 /* ================== КОМПЬЮТЕР ================== */
 

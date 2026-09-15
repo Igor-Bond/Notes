@@ -16,8 +16,8 @@
  * установленных приложений останется старый кэш.
  */
 
-const APP_VERSION = 'v1';
-const CACHE_NAME = `noty-${APP_VERSION}`;
+const APP_VERSION = 'v2';
+const CACHE_NAME = `notes-${APP_VERSION}`;
 
 const СРОК_СЕТИ = 3000;
 
@@ -71,7 +71,7 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys()
             .then((имена) => Promise.all(имена
-                .filter((имя) => имя.startsWith('noty-') && имя !== CACHE_NAME)
+                .filter((имя) => имя.startsWith('notes-') && имя !== CACHE_NAME)
                 .map((имя) => caches.delete(имя))))
             .then(() => self.clients.claim())
     );

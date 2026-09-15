@@ -29,7 +29,9 @@ function карточка(уровень) {
                 <span class="level-sub">${уровень.подпись}</span>
                 <span class="level-stars">${ui.звёзды(пройдено.звёзды)}</span>
             </span>
-            <span class="level-count">${уровень.вопросы.length}</span>
+            ${пройдено.звёзды === 3
+                ? ui.html`<span class="level-medal" aria-label="Уровень пройден">🏅</span>`
+                : ui.html`<span class="level-count">${уровень.вопросы.length}</span>`}
         </button>
     `;
 }

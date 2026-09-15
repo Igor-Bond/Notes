@@ -9,7 +9,7 @@
 import { describe, it, equal, assert } from '../runner.js';
 import { хранилище } from '../../js/core/store.js';
 
-const КЛЮЧ = globalThis.__NOTY_KEY__;
+const КЛЮЧ = globalThis.__NOTES_KEY__;
 
 function начисто() {
     localStorage.removeItem(КЛЮЧ);
@@ -18,7 +18,7 @@ function начисто() {
 describe('Хранилище', () => {
 
     it('проверки идут по своему ключу', () => {
-        assert(КЛЮЧ && КЛЮЧ !== 'noty.v1', `ключ проверок: ${КЛЮЧ}`);
+        assert(КЛЮЧ && КЛЮЧ !== 'notes.v1', `ключ проверок: ${КЛЮЧ}`);
     });
 
     it('пустое хранилище — уровень без звёзд', () => {

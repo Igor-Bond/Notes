@@ -57,7 +57,7 @@
 <div class="wrap">
     <h1>Проверки</h1>
     <p class="lead">
-        Отдельный ключ хранения <code>noty.test</code>: звёзды ребёнка не трогаются.
+        Отдельный ключ хранения <code>notes.test</code>: звёзды ребёнка не трогаются.
     </p>
     <div id="results">Выполняются…</div>
 </div>
@@ -86,7 +86,7 @@
     один раз. Отсюда же динамический импорт вместо статического тега.
 -->
 <script>
-    globalThis.__NOTY_KEY__ = 'noty.test';
+    globalThis.__NOTES_KEY__ = 'notes.test';
 
     (async () => {
         const управлял = !!navigator.serviceWorker?.controller;
