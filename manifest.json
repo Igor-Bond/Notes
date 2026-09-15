@@ -1,0 +1,19 @@
+{
+  "name": "Ноты — тренажёр",
+  "short_name": "Ноты",
+  "description": "Узнавать ноты на нотном стане: скрипичный и басовый ключ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f3ec",
+  "theme_color": "#f7f3ec",
+  "lang": "ru",
+  "categories": ["education", "music", "kids"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

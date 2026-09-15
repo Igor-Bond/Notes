@@ -1,0 +1,380 @@
+/*
+ * Тренажёр нот — стили.
+ *
+ * Все цвета объявлены переменными в одном месте и нигде не дублируются: ни в
+ * других правилах, ни в JavaScript. Рисунок стана берёт цвет через
+ * currentColor, поэтому подсветка верного и неверного ответа — это одно
+ * свойство на корневом svg, а не перерисовка.
+ *
+ * Тема светлая, и это не вкус: ноты ребёнок видит на бумаге — чёрным по
+ * белому, — и тренажёр не должен переучивать глаз на белое по чёрному.
+ */
+
+:root {
+    --bg:        #f7f3ec;
+    --panel:     #ffffff;
+    --line:      #e2d9ca;
+    --ink:       #23201c;   /* стан, ключи, ноты */
+    --text:      #2c2822;
+    --text-dim:  #8c8172;
+    --accent:    #3f7fd8;
+    --accent-dim:#dbe7f8;
+    --good:      #2f9e63;
+    --good-bg:   #e4f4ea;
+    --bad:       #d1503c;
+    --bad-bg:    #fae8e4;
+    --gold:      #f0b429;
+
+    --font-text: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+
+    --radius:    14px;
+    --content:   560px;
+
+    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+
+/*
+ * Браузер прячет [hidden] своим правилом display: none, но любое наше
+ * правило с display перебивает его — оно сильнее по происхождению.
+ */
+[hidden] { display: none !important; }
+
+html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-text);
+    line-height: 1.45;
+    -webkit-text-size-adjust: 100%;
+}
+
+/*
+ * Выделение текста отключено везде, кроме мест, где его правда выделяют.
+ *
+ * На планшете быстрый двойной тык по кнопке ответа выделяет её подпись и
+ * вызывает системное меню «Скопировать» — ребёнок видит, что тренажёр
+ * сломался, и зовёт взрослого.
+ */
+button, .dot, .star, .stan { user-select: none; -webkit-user-select: none; }
+
+/* Серый мигающий прямоугольник при касании на Android выглядит поломкой */
+button { -webkit-tap-highlight-color: transparent; }
+
+.screen {
+    display: block;
+    max-width: var(--content);
+    margin: 0 auto;
+    padding: calc(16px + var(--safe-top)) 16px calc(24px + var(--safe-bottom));
+}
+
+.loading, .empty-note, .noscript, .boot-failed {
+    color: var(--text-dim);
+    text-align: center;
+    padding: 40px 16px;
+}
+
+.boot-failed { text-align: left; }
+.boot-quiet { color: var(--text-dim); font-size: 12px; word-break: break-word; }
+
+/* ================== ВЫБОР УРОВНЯ ================== */
+
+.head { text-align: center; margin: 12px 0 20px; }
+
+.head h1 {
+    font-size: 30px;
+    margin: 0;
+    letter-spacing: 0.02em;
+}
+
+.head-sub { margin: 4px 0 0; color: var(--text-dim); font-size: 14px; }
+
+.levels { display: grid; gap: 10px; }
+
+/*
+ * Карточка уровня — одна большая кнопка, а не строка со стрелочкой.
+ *
+ * Нажимать её будет палец шестилетнего, и промах по строке высотой в текст
+ * означает открытый не тот уровень. Здесь мишень во всю ширину и в четыре
+ * пальца высотой.
+ */
+.level {
+    display: grid;
+    grid-template-columns: 46px 1fr auto;
+    align-items: center;
+    gap: 14px;
+
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.level:active { transform: scale(0.99); }
+.level.done { border-color: var(--good); background: var(--good-bg); }
+
+.level-clef { color: var(--ink); display: flex; }
+.level-clef .stan-mini { width: 46px; height: 58px; }
+
+.level-text { display: grid; gap: 2px; }
+.level-name { font-size: 17px; font-weight: 600; }
+.level-sub { font-size: 13px; color: var(--text-dim); }
+
+.level-count {
+    font-size: 13px;
+    color: var(--text-dim);
+    background: var(--bg);
+    border-radius: 999px;
+    padding: 2px 10px;
+}
+
+.level.done .level-count { background: var(--panel); }
+
+.star { color: var(--line); font-size: 15px; letter-spacing: 1px; }
+.star.on { color: var(--gold); }
+
+/* ================== ПОДВАЛ ================== */
+
+.footer {
+    margin-top: 26px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 12px;
+    justify-items: center;
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+.switch { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.switch input { width: 20px; height: 20px; accent-color: var(--accent); }
+
+.quiet-btn {
+    border: 0;
+    background: none;
+    color: var(--text-dim);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 6px;
+}
+
+.version { margin: 0; font-size: 12px; }
+
+/* ================== ЗАНЯТИЕ ================== */
+
+/*
+ * Занятие занимает высоту экрана целиком и не прокручивается.
+ *
+ * Прокрутка здесь — это уехавший вверх стан в момент ответа: ребёнок видит
+ * кнопки и не видит ноту. Поэтому стан растягивается по остатку, а кнопки
+ * прижаты к низу и стоят на месте от вопроса к вопросу.
+ */
+.drill {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: calc(100dvh - 40px - var(--safe-top) - var(--safe-bottom));
+}
+
+.drill-head {
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon-btn {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.dots { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--line);
+}
+
+.dot.ok  { background: var(--good); }
+.dot.bad { background: var(--bad); }
+.dot.now { background: var(--accent); transform: scale(1.3); }
+
+.count { font-size: 13px; color: var(--text-dim); }
+
+.stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 12px;
+    min-height: 200px;
+}
+
+.stan {
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    color: var(--ink);
+}
+
+.stan.ok  { color: var(--good); }
+.stan.bad { color: var(--bad); }
+
+/*
+ * Линейки стана и ключ всегда чёрные, даже когда нота подсвечена.
+ *
+ * Позеленевший целиком стан читается как «весь ответ верный», а
+ * покрасневший — как будто сломался тренажёр. Цветом отвечает нота, стан
+ * остаётся бумагой.
+ */
+.stan .stan-lines, .stan .stan-clef { color: var(--ink); }
+
+.verdict-box { min-height: 78px; text-align: center; }
+
+.verdict { margin: 0; font-size: 17px; font-weight: 600; }
+.verdict.hint { color: var(--text-dim); font-weight: 400; }
+.verdict.ok   { color: var(--good); }
+.verdict.bad  { color: var(--bad); }
+
+.next-btn {
+    margin-top: 8px;
+    padding: 10px 28px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/*
+ * Кнопки ответа — сетка, а не строка.
+ *
+ * В строку семь кнопок на телефоне сжимаются до полосок в палец шириной, и
+ * промах по соседней ноте засчитывается как незнание. Сетка из четырёх в
+ * ряд держит мишень крупной при любом числе кнопок.
+ */
+.keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.key {
+    position: relative;
+    padding: 16px 4px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    font-size: 19px;
+    cursor: pointer;
+}
+
+.key:active { background: var(--accent-dim); }
+.key[disabled] { opacity: 0.55; cursor: default; }
+
+.key.ok  { background: var(--good-bg); border-color: var(--good); color: var(--good); opacity: 1; }
+.key.bad { background: var(--bad-bg);  border-color: var(--bad);  color: var(--bad);  opacity: 1; }
+
+/* Цифра — подсказка для клавиатуры; на телефоне она не мешает и не зовёт */
+.key-num {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    font-size: 10px;
+    color: var(--text-dim);
+}
+
+/* ================== ИТОГ ================== */
+
+.result { text-align: center; }
+
+.result-stars { line-height: 1.1; }
+.result-stars .star { font-size: 44px; }
+
+.result-word  { margin: 6px 0 0; font-size: 22px; font-weight: 600; }
+.result-score { margin: 2px 0 0; font-size: 34px; font-weight: 700; }
+.result-level { margin: 0; color: var(--text-dim); font-size: 14px; }
+
+.result-head {
+    margin: 26px 0 10px;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.misses { display: grid; gap: 8px; }
+
+.miss {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    text-align: left;
+}
+
+.miss .stan { width: 110px; }
+
+.miss-text { display: grid; gap: 2px; }
+.miss-right { font-size: 17px; font-weight: 600; }
+.miss-wrong { font-size: 13px; color: var(--bad); }
+
+.result-buttons { display: grid; gap: 10px; justify-items: center; margin-top: 26px; }
+
+.big-btn {
+    width: 100%;
+    max-width: 320px;
+    padding: 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.big-btn:active { filter: brightness(0.94); }
+
+/* ================== КОМПЬЮТЕР ================== */
+
+/*
+ * На большом экране тренажёр не растягивается, а вырастает.
+ *
+ * Ширина остаётся прежней — читать ноту глазами через полметра стана
+ * неудобно, — но сам стан и кнопки становятся крупнее: за компьютером
+ * ребёнок сидит дальше от экрана, чем держит планшет.
+ */
+@media (min-width: 700px) and (min-height: 620px) {
+    .stan { max-width: 420px; }
+    .key { padding: 20px 4px; font-size: 21px; }
+}

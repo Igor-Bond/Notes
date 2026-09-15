@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f7f3ec">
+<meta name="description" content="Тренажёр нот: узнавать ноты на нотном стане в скрипичном и басовом ключе">
+<title>Ноты</title>
+
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ноты">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<main id="screen" class="screen">
+    <div class="loading">Загрузка…</div>
+</main>
+
+<noscript>
+    <div class="noscript">Тренажёру нужен JavaScript — включите его в настройках браузера.</div>
+</noscript>
+
+<!--
+    Сторож запуска.
+
+    Обычный скрипт, а не модуль, и стоит он до модуля: если модуль не
+    загрузился или упал на первой строке, этот всё равно выполнится. Иначе на
+    экране вечная «Загрузка…», а до разработчика доходит «не открывается» —
+    и больше ничего.
+
+    Ничего не чинит: показывает, что случилось, и чем это показать тому, кто
+    сможет починить.
+-->
+<script>
+(function () {
+    var беда = null;
+
+    window.addEventListener('error', function (e) {
+        беда = беда || (e.message + (e.filename ? ' — ' + e.filename + ':' + e.lineno : ''));
+    }, true);
+
+    window.addEventListener('unhandledrejection', function (e) {
+        беда = беда || ('' + ((e.reason && e.reason.message) || e.reason));
+    });
+
+    setTimeout(function () {
+        var место = document.querySelector('#screen .loading');
+        if (!место) return;
+
+        место.className = 'boot-failed';
+        место.textContent = '';
+
+        var строка = function (текст, тихо) {
+            var p = document.createElement('p');
+            p.textContent = текст;
+            if (тихо) p.className = 'boot-quiet';
+            место.appendChild(p);
+        };
+
+        строка('Тренажёр не запустился. Попробуйте обновить страницу.');
+        if (беда) строка(беда, true);
+        строка(navigator.userAgent, true);
+    }, 8000);
+})();
+</script>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
