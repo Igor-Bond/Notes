@@ -20,6 +20,7 @@ await import('./suites/staff.test.js');
 await import('./suites/drill.test.js');
 await import('./suites/levels.test.js');
 await import('./suites/store.test.js');
+await import('./suites/haptics.test.js');
 await import('./suites/screens.test.js');
 
 const summary = await run(document.getElementById('results'));

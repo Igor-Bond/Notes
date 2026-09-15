@@ -79,12 +79,21 @@ export const итогЭкран = {
         // нечего, и придумывать нечего тоже
         if (!итог) { app.go('выбор'); return ''; }
 
+        const доля = (итог.верных / итог.всего).toFixed(3);
+
         return ui.html`
             <div class="result">
                 ${итог.звёзды === 3 ? конфетти() : ''}
+
+                <div class="score-ring" style="--доля: ${доля}">
+                    <div class="score-hole">
+                        <p class="result-score">${итог.верных}</p>
+                        <span class="result-of">из ${итог.всего}</span>
+                    </div>
+                </div>
+
                 <div class="result-stars">${ui.звёзды(итог.звёзды)}</div>
                 <p class="result-word">${СЛОВА[итог.звёзды]}</p>
-                <p class="result-score">${итог.верных} из ${итог.всего}</p>
                 <p class="result-level">${итог.имя}</p>
 
                 ${итог.ошибки.length ? ui.html`
@@ -95,8 +104,10 @@ export const итогЭкран = {
                 <div class="result-buttons">
                     ${итог.ошибки.length ? ui.html`
                         <button class="big-btn" data-action="повторить-ошибки">Повторить эти ноты</button>
-                    ` : ''}
-                    <button class="big-btn" data-action="ещё-раз">Ещё раз</button>
+                        <button class="big-btn second" data-action="ещё-раз">Весь уровень заново</button>
+                    ` : ui.html`
+                        <button class="big-btn" data-action="ещё-раз">Ещё раз</button>
+                    `}
                     <button class="quiet-btn" data-action="к-уровням">К уровням</button>
                 </div>
             </div>

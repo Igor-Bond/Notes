@@ -16,7 +16,7 @@
  * установленных приложений останется старый кэш.
  */
 
-const APP_VERSION = 'v2';
+const APP_VERSION = 'v3';
 const CACHE_NAME = `notes-${APP_VERSION}`;
 
 const СРОК_СЕТИ = 3000;
@@ -38,6 +38,7 @@ const ФАЙЛЫ = [
 
     'js/core/actions.js',
     'js/core/drill.js',
+    'js/core/haptics.js',
     'js/core/levels.js',
     'js/core/notes.js',
     'js/core/staff.js',

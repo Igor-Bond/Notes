@@ -111,6 +111,29 @@ describe('Выбор уровня', () => {
         проверитьДействия(экран());
     });
 
+    it('считает собранные звёзды по всем уровням', async () => {
+        хранилище.сбросить();
+
+        app.go('выбор');
+        await дождаться(() => экран().querySelector('.total-count'), 'строка собранных звёзд');
+
+        const строка = () => экран().querySelector('.total-count').textContent.replace(/\s+/g, ' ').trim();
+        const потолок = УРОВНИ.length * 3;
+
+        assert(строка().startsWith(`0 из ${потолок}`), `в начале: ${строка()}`);
+        equal(экран().querySelector('.bar-fill').style.getPropertyValue('--доля').trim(), '0.000');
+
+        хранилище.записатьЗанятие('три', { верных: 10, всего: 10, звёзды: 3 });
+        хранилище.записатьЗанятие('пять', { верных: 8, всего: 10, звёзды: 2 });
+
+        app.go('выбор');
+        await дождаться(() => строка().startsWith('5 из'), 'пересчёт звёзд');
+
+        assert(строка().startsWith(`5 из ${потолок}`), `после двух занятий: ${строка()}`);
+
+        хранилище.сбросить();
+    });
+
     it('у пройденного уровня закрашены звёзды', async () => {
         хранилище.записатьЗанятие('три', { верных: 10, всего: 10, звёзды: 3 });
 
@@ -135,7 +158,7 @@ describe('Занятие от начала до итога', () => {
         начать('три');
         await дождаться(() => экран().querySelector('.drill'), 'экран занятия');
 
-        equal(экран().querySelectorAll('.dot').length, 10);
+        equal(экран().querySelectorAll('.seg').length, 10);
         equal(экран().querySelectorAll('.key').length, 3);
         проверитьДействия(экран());
 
@@ -143,7 +166,7 @@ describe('Занятие от начала до итога', () => {
         кнопкаОтвета(имя(нотаНаЭкране())).click();
 
         await дождаться(() => экран().querySelector('.verdict.ok'), 'отметка верного ответа');
-        equal(экран().querySelectorAll('.dot.ok').length, 1);
+        equal(экран().querySelectorAll('.seg.ok').length, 1);
 
         await дождаться(() => экран().textContent.includes('2 / 10'), 'переход ко второму вопросу');
 
@@ -163,7 +186,8 @@ describe('Занятие от начала до итога', () => {
 
         await дождаться(() => экран().querySelector('.result'), 'экран итога');
 
-        equal(экран().querySelector('.result-score').textContent.trim(), '1 из 10');
+        equal(экран().querySelector('.result-score').textContent.trim(), '1');
+        equal(экран().querySelector('.result-of').textContent.trim(), 'из 10');
         equal(экран().querySelectorAll('.star.on').length, 0);
         equal(экран().querySelectorAll('.miss').length, 9);
         проверитьДействия(экран());
@@ -188,7 +212,7 @@ describe('Занятие от начала до итога', () => {
 
         await дождаться(() => экран().querySelector('.drill'), 'занятие из ошибок');
 
-        const сколько = экран().querySelectorAll('.dot').length;
+        const сколько = экран().querySelectorAll('.seg').length;
         assert(сколько >= 4 && сколько <= 10, `вопросов в повторении: ${сколько}`);
     });
 
