@@ -16,7 +16,7 @@
  * установленных приложений останется старый кэш.
  */
 
-const APP_VERSION = 'v4';
+const APP_VERSION = 'v5';
 const CACHE_NAME = `notes-${APP_VERSION}`;
 
 const СРОК_СЕТИ = 3000;
